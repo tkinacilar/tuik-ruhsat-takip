@@ -1,15 +1,28 @@
-name: TUİK Kontrol
+name: TUİK Ruhsat Takibi
 
 on:
   workflow_dispatch:
 
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 6 * * *'   # Her gün 06:00 UTC = Türkiye 09:00
 
 jobs:
-  test:
+  check:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Test
-        run: echo "Merhaba Turgut, workflow başarıyla çalıştı."
+
+      - name: Repoyu indir
+        uses: actions/checkout@v4
+
+      - name: Python Kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Kütüphaneleri Kur
+        run: |
+          pip install requests beautifulsoup4 pandas openpyxl
+
+      - name: Scripti Çalıştır
+        run: python scripts/check_tuik.py
