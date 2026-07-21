@@ -2,27 +2,32 @@ name: TUİK Ruhsat Takibi
 
 on:
   workflow_dispatch:
-
   schedule:
-    - cron: '0 6 * * *'   # Her gün 06:00 UTC = Türkiye 09:00
+    - cron: '0 6 * * *'   # 09:00 Türkiye saati
 
 jobs:
   check:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Repoyu indir
         uses: actions/checkout@v4
 
-      - name: Python Kur
+      - name: Python kur
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Kütüphaneleri Kur
-        run: |
-          pip install requests beautifulsoup4 pandas openpyxl
+      - name: Kütüphaneleri kur
+        run: pip install -r requirements.txt
 
-      - name: Scripti Çalıştır
+      - name: Scripti çalıştır
+        env:
+          TUIK_URL: ${{ secrets.TUIK_URL }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
         run: python scripts/check_tuik.py
