@@ -3,7 +3,7 @@ name: TUİK Ruhsat Takibi
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 6 * * *'   # 09:00 Türkiye saati
 
 jobs:
   check:
@@ -18,4 +18,12 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - run: python scripts/check_tuik.py
+      - name: Run TUİK check
+        env:
+          TUIK_URL: ${{ secrets.TUIK_URL }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        run: python scripts/check_tuik.py
