@@ -1,3 +1,1 @@
-print("Merhaba Turgut KINACILAR!")
-
-print("Python script başarıyla çalışıyor.")
+print("TÜİK Scripti Çalıştı")
