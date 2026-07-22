@@ -3,7 +3,7 @@ name: TUİK Ruhsat Takibi
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 6 * * *'   # 09:00 Türkiye saati
+    - cron: '0 6 * * *'
 
 jobs:
   check:
