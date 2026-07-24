@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 
 TUIK_URL = os.environ.get(
     "TUIK_URL",
-    "https://data.tuik.gov.tr/Bulten/Index?p=Yapi-Izin-Istatistikleri",
+    "https://veriportali.tuik.gov.tr/Bulten/Index?dil=1&p=Yap%C4%B1-%C4%B0zin-%C4%B0statistikleri-I.-%C3%87eyrek%3A-Ocak-Mart-2026-58303",
 )
 
 STATE_FILE = Path("state/last.json")
