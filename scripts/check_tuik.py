@@ -50,23 +50,44 @@ def extract_latest_signature(html: str, base_url: str) -> dict:
     bulletin_title = ""
     bulletin_href = ""
 
+    # "Yapı İzin İstatistikleri" bültenini bul
     for a in soup.find_all("a", href=True):
         text = normalize(a.get_text(" ", strip=True))
-        href = a.get("href", "")
 
         if "Yapı İzin İstatistikleri" in text:
             bulletin_title = text
-            bulletin_href = urljoin(base_url, href)
+            bulletin_href = urljoin(base_url, a["href"])
             break
 
-    signature = bulletin_title + "|" + bulletin_href
+    if not bulletin_href:
+        raise Exception("Yapı İzin İstatistikleri bülteni bulunamadı.")
+
+    # Asıl bülten sayfasını indir
+    bulletin_html = fetch_html(bulletin_href)
+    bulletin = BeautifulSoup(bulletin_html, "html.parser")
+
+    excel_link = ""
+
+    # Excel / XLS / XLSX bağlantısını ara
+    for a in bulletin.find_all("a", href=True):
+        href = a["href"]
+
+        if (
+            ".xlsx" in href.lower()
+            or ".xls" in href.lower()
+            or "excel" in href.lower()
+        ):
+            excel_link = urljoin(bulletin_href, href)
+            break
+
+    signature = bulletin_href
 
     return {
         "title": bulletin_title,
         "href": bulletin_href,
+        "excel": excel_link,
         "signature": signature,
     }
-
 
 def send_mail(subject: str, body: str) -> None:
     host = os.environ["SMTP_HOST"]
