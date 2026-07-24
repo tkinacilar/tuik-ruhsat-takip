@@ -122,8 +122,8 @@ def main() -> None:
 body = (
     "Merhaba,\n\n"
     "Yeni TÜİK Yapı İzin İstatistikleri yayımlandı.\n\n"
-    f"Bülten : {current['title']}\n\n"
-    f"Link : {current['href']}\n\n"
+    f"Bülten:\n{current['href']}\n\n"
+    f"Excel:\n{current['excel']}\n\n"
     "İyi çalışmalar."
 )
 
