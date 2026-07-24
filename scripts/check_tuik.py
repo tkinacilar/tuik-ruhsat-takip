@@ -47,39 +47,23 @@ def normalize(text: str) -> str:
 def extract_latest_signature(html: str, base_url: str) -> dict:
     soup = BeautifulSoup(html, "html.parser")
 
-    page_title = normalize(soup.title.get_text(" ", strip=True)) if soup.title else ""
-
-    # Sayfada "En Son Yayımlanan Bülten" veya buna benzer ifadeleri arar.
-    body_text = normalize(soup.get_text(" ", strip=True))
-
-    quarter_match = re.search(r"\b([IVX]{1,4})\.\s*Çeyrek\b", body_text, re.IGNORECASE)
-    quarter = quarter_match.group(0) if quarter_match else ""
-
-    # İlk anlamlı bülten bağlantısını yakalamaya çalış.
     bulletin_title = ""
     bulletin_href = ""
 
     for a in soup.find_all("a", href=True):
         text = normalize(a.get_text(" ", strip=True))
-        href = a["href"].strip()
+        href = a.get("href", "")
 
-        combined = f"{text} {href}"
-        if "Yapı İzin İstatistikleri" in combined or re.search(r"\bÇeyrek\b", combined, re.IGNORECASE):
-            bulletin_title = text or bulletin_title
+        if "Yapı İzin İstatistikleri" in text:
+            bulletin_title = text
             bulletin_href = urljoin(base_url, href)
             break
 
-    # Başlık boşsa sayfa başlığını kullan
-    if not bulletin_title:
-        bulletin_title = page_title
-
-    signature = normalize(f"{bulletin_title}|{bulletin_href}|{quarter}|{page_title}")
+    signature = bulletin_title + "|" + bulletin_href
 
     return {
         "title": bulletin_title,
         "href": bulletin_href,
-        "quarter": quarter,
-        "page_title": page_title,
         "signature": signature,
     }
 
@@ -114,12 +98,13 @@ def main() -> None:
         return
 
     subject = "TÜİK Yapı İzin İstatistikleri Güncellendi"
-    body = (
-        "Merhaba,\n\n"
-        "TÜİK Yapı İzin İstatistikleri için yeni bir bülten yayımlandı.\n\n"
-        f"İncelemek için:\n{TUIK_URL}\n\n"
-        "İyi çalışmalar.\n"
-    )
+body = (
+    "Merhaba,\n\n"
+    "Yeni TÜİK Yapı İzin İstatistikleri yayımlandı.\n\n"
+    f"Bülten : {current['title']}\n\n"
+    f"Link : {current['href']}\n\n"
+    "İyi çalışmalar."
+)
 
     send_mail(subject, body)
 
