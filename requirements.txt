@@ -1,2 +1,5 @@
-requests
-beautifulsoup4
+save_state({
+    "last_signature": current["signature"],
+    "last_title": current["title"],
+    "last_href": current["href"],
+})
